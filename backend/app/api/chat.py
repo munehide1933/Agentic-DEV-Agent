@@ -82,7 +82,9 @@ async def send_message(request: ChatRequest, db: AsyncSession = Depends(get_db))
                 "security_warnings": security_warnings,
             }
         )
-        
+        # 刷新对象
+        await db.refresh(assistant_message)
+
         # 8. 构建响应
         workflow_state_data = workflow_result.get("workflow_state", {})
         

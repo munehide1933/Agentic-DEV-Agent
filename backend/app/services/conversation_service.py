@@ -57,9 +57,13 @@ class ConversationService:
     @staticmethod
     async def get_conversations(db: AsyncSession, project_id: int) -> List[Conversation]:
         """获取项目的所有对话"""
+        from sqlalchemy.orm import selectinload
+        from sqlalchemy import select, desc
+        
         result = await db.execute(
             select(Conversation)
             .where(Conversation.project_id == project_id)
+            .options(selectinload(Conversation.messages))
             .order_by(desc(Conversation.updated_at))
         )
         return result.scalars().all()
@@ -67,34 +71,31 @@ class ConversationService:
     @staticmethod
     async def get_conversation(db: AsyncSession, conversation_id: int) -> Optional[Conversation]:
         """获取单个对话及其消息"""
+        from sqlalchemy.orm import selectinload
+        from sqlalchemy import select
+        
         result = await db.execute(
-            select(Conversation).where(Conversation.id == conversation_id)
+            select(Conversation)
+            .where(Conversation.id == conversation_id)
+            .options(selectinload(Conversation.messages))
         )
-        conversation = result.scalar_one_or_none()
-        
-        if conversation:
-            messages_result = await db.execute(
-                select(Message)
-                .where(Message.conversation_id == conversation_id)
-                .order_by(Message.created_at)
-            )
-            conversation.messages = messages_result.scalars().all()
-        
-        return conversation
+        return result.scalar_one_or_none()
     
     @staticmethod
     async def add_message(db: AsyncSession,
-                         conversation_id: int,
-                         role: str,
-                         content: str,
-                         meta_info: Optional[dict] = None) -> Message:
+                        conversation_id: int,
+                        role: str,
+                        content: str,
+                        meta_info: Optional[dict] = None) -> Message:
         """添加消息到对话"""
         message = Message(
             conversation_id=conversation_id,
             role=role,
             content=content,
-            meta_info=meta_info  # 更新为 meta_info
+            meta_info=meta_info
         )
+        
+        db.add(message)
         
         # 更新对话的 updated_at
         conversation = await db.get(Conversation, conversation_id)
@@ -102,7 +103,8 @@ class ConversationService:
             conversation.updated_at = datetime.utcnow()
         
         await db.commit()
-        await db.refresh(message)
+        await db.refresh(message)  # 🔑 关键：刷新对象以重新附加到会话
+        
         return message
     
     @staticmethod

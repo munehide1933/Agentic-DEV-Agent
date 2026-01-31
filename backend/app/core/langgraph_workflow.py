@@ -86,7 +86,7 @@ Provide your analysis in this format:
             system_prompt=state['system_prompt'],
             user_message=prompt,
             conversation_history=state.get('messages', []),
-            temperature=0.5
+            #temperature=0.5
         )
         
         state['requirement_analysis'] = response['content'] if response['success'] else "Error in analysis"
@@ -117,7 +117,7 @@ Provide your design.
             system_prompt=state['system_prompt'],
             user_message=prompt,
             conversation_history=state.get('messages', []),
-            temperature=0.6
+            #temperature=0.6
         )
         
         state['architecture_design'] = response['content'] if response['success'] else "Error in design"
@@ -163,7 +163,7 @@ Provide your plan.
             system_prompt=state['system_prompt'],
             user_message=prompt,
             conversation_history=state.get('messages', []),
-            temperature=0.5
+            #temperature=0.5
         )
         
         state['rag_plan'] = response['content'] if response['success'] else "Error in RAG planning"
@@ -192,8 +192,8 @@ Provide your implementation with clear code blocks.
             system_prompt=state['system_prompt'],
             user_message=prompt,
             conversation_history=state.get('messages', []),
-            temperature=0.7,
-            max_tokens=4000
+            #temperature=0.7,
+            #max_tokens=4000
         )
         
         state['implementation'] = response['content'] if response['success'] else "Error in implementation"
@@ -237,7 +237,7 @@ Provide your security review.
             system_prompt=state['system_prompt'],
             user_message=prompt,
             conversation_history=state.get('messages', []),
-            temperature=0.3
+            #temperature=0.3
         )
         
         state['security_review'] = response['content'] if response['success'] else "Error in security review"

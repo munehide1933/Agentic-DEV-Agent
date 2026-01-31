@@ -53,14 +53,35 @@ async def delete_project(project_id: int, db: AsyncSession = Depends(get_db)):
 @router.get("/{project_id}/conversations", response_model=List[ConversationResponse])
 async def list_conversations(project_id: int, db: AsyncSession = Depends(get_db)):
     """获取项目的所有对话"""
-    conversations = await ConversationService.get_conversations(db, project_id)
+    from sqlalchemy.orm import selectinload
+    from sqlalchemy import select
+    from app.models.database import Conversation
+    
+    # 使用 selectinload 预加载 messages 关系
+    result = await db.execute(
+        select(Conversation)
+        .where(Conversation.project_id == project_id)
+        .options(selectinload(Conversation.messages))
+        .order_by(Conversation.updated_at.desc())
+    )
+    conversations = result.scalars().all()
     return conversations
 
 
 @router.get("/conversations/{conversation_id}", response_model=ConversationResponse)
 async def get_conversation(conversation_id: int, db: AsyncSession = Depends(get_db)):
     """获取对话详情"""
-    conversation = await ConversationService.get_conversation(db, conversation_id)
+    from sqlalchemy.orm import selectinload
+    from sqlalchemy import select
+    from app.models.database import Conversation
+    
+    result = await db.execute(
+        select(Conversation)
+        .where(Conversation.id == conversation_id)
+        .options(selectinload(Conversation.messages))
+    )
+    conversation = result.scalar_one_or_none()
+    
     if not conversation:
         raise HTTPException(status_code=404, detail="Conversation not found")
     return conversation

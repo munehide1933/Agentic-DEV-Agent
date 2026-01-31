@@ -15,7 +15,7 @@
 
 ### 后端
 - **框架**: FastAPI
-- **LLM**: Azure OpenAI (GPT-4)
+- **LLM**: Azure OpenAI (GPT-5)
 - **向量数据库**: Qdrant
 - **关系数据库**: SQLite
 - **ORM**: SQLAlchemy
@@ -45,23 +45,23 @@ git clone <your-repo-url>
 cd meta-agent-system
 2. 一键安装
 Windows:
-bashCopypython setup.py
+python setup.py
 Linux:
-bashCopypython3 setup.py
+python3 setup.py
 3. 配置环境变量
 编辑根目录下的 .env 文件，填入你的 Azure OpenAI 凭证：
 envCopyAZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
 AZURE_OPENAI_API_KEY=your-api-key-here
 AZURE_OPENAI_API_VERSION=2024-02-15-preview
-AZURE_OPENAI_DEPLOYMENT_NAME=gpt-4
+AZURE_OPENAI_DEPLOYMENT_NAME=gpt-5
 AZURE_OPENAI_EMBEDDING_DEPLOYMENT=text-embedding-3-large
 
 SECRET_KEY=your-secret-key-change-in-production
 4. 启动系统
 Windows:
-bashCopyrun_windows.bat
+run_windows.bat
 Linux:
-bashCopy./run_linux.sh
+./run_linux.sh
 5. 访问应用
 
 前端界面: http://localhost:5173
@@ -195,69 +195,4 @@ Qdrant
 FastAPI
 React
 
-
 Enjoy building with Meta-Agent! 🚀
-Copy
----
-
-## 完整部署清单
-
-✅ **后端代码** (完整)
-- 配置管理
-- 数据库模型
-- 核心引擎（工作流、角色、代码修改、安全审查）
-- LLM服务
-- RAG服务
-- 向量服务
-- 对话管理服务
-- API路由
-
-✅ **前端代码** (完整)
-- TypeScript类型定义
-- Zustand状态管理
-- API服务封装
-- React组件（布局、聊天界面、消息列表、输入区域）
-- TailwindCSS样式
-
-✅ **部署脚本**
-- Windows启动脚本
-- Linux启动脚本
-- Python安装脚本
-- 完整README文档
-
----
-
-## 🎯 Next Steps
-
-**请按以下步骤部署：**
-
-1. **创建项目目录结构** 并复制所有代码文件
-2. **运行安装脚本**: `python setup.py`
-3. **配置 .env 文件** 添加 Azure OpenAI 凭证
-4. **启动系统**:
-   - Windows: `run_windows.bat`
-   - Linux: `./run_linux.sh`
-5. **访问** http://localhost:5173 开始使用
-
----
-
-**Security Review:**
-
-⚠️ **生产环境注意事项**:
-1. 更改 `SECRET_KEY` 为强随机字符串
-2. 启用 HTTPS（使用 Nginx + Let's Encrypt）
-3. 限制文件上传大小（已设置10MB）
-4. 定期备份 SQLite 和 Qdrant 数据
-5. 监控 API 调用成本
-6. 实施速率限制（FastAPI Limiter）
-
----
-
-**Optional Enhancements:**
-
-1. Docker 部署配置
-2. 用户认证系统
-3. 多项目并行支持
-4. 代码差异可视化
-5. 自动化测试生成
-6. CI/CD集成

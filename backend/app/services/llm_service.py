@@ -8,14 +8,12 @@ class LLMService:
     """LangChain集成的Azure OpenAI服务"""
     
     def __init__(self):
-        # 初始化聊天模型
+        # 初始化聊天模型（不设置任何动态参数）
         self.chat_model = AzureChatOpenAI(
             azure_endpoint=settings.AZURE_OPENAI_ENDPOINT,
             api_key=settings.AZURE_OPENAI_API_KEY,
             api_version=settings.AZURE_OPENAI_API_VERSION,
             deployment_name=settings.AZURE_OPENAI_DEPLOYMENT_NAME,
-            temperature=0.7,
-            max_tokens=4000,
         )
         
         # 初始化嵌入模型
@@ -31,9 +29,7 @@ class LLMService:
     async def generate_response(self,
                                system_prompt: str,
                                user_message: str,
-                               conversation_history: Optional[List[Dict[str, str]]] = None,
-                               #temperature: float = 0.7,
-                               max_tokens: int = 4000) -> Dict[str, any]:
+                               conversation_history: Optional[List[Dict[str, str]]] = None) -> Dict[str, any]:
         """使用LangChain生成响应"""
         
         try:
@@ -58,13 +54,10 @@ class LLMService:
             # 添加当前用户消息
             messages.append(HumanMessage(content=user_message))
             
-            # 调用模型
-            response = await self.chat_model.ainvoke(
-                messages,
-                config={"max_tokens": max_tokens, "temperature": temperature}
-            )
+            # 调用模型（不传递任何额外参数）
+            response = await self.chat_model.ainvoke(messages)
             
-            # 计算token使用（LangChain可能不直接提供，需要手动计算）
+            # 计算token使用
             prompt_tokens = sum(self.count_tokens(msg.content) for msg in messages)
             completion_tokens = self.count_tokens(response.content)
             
